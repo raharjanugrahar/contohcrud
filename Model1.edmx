@@ -1,0 +1,438 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="assessmentdbModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="ltcourierfee">
+          <Key>
+            <PropertyRef Name="WeightID" />
+          </Key>
+          <Property Name="WeightID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CourierID" Type="int" />
+          <Property Name="StartKg" Type="int" />
+          <Property Name="EndKg" Type="int" />
+          <Property Name="Price" Type="decimal" Precision="18" Scale="0" />
+        </EntityType>
+        <EntityType Name="mscourier">
+          <Key>
+            <PropertyRef Name="CourierID" />
+          </Key>
+          <Property Name="CourierID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CourierName" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="mspayment">
+          <Key>
+            <PropertyRef Name="PaymentID" />
+          </Key>
+          <Property Name="PaymentID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PaymentName" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="msproduct">
+          <Key>
+            <PropertyRef Name="ProductID" />
+          </Key>
+          <Property Name="ProductID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ProductName" Type="nvarchar(max)" />
+          <Property Name="Weight" Type="float" />
+          <Property Name="Price" Type="decimal" Precision="18" Scale="0" />
+        </EntityType>
+        <EntityType Name="mssales">
+          <Key>
+            <PropertyRef Name="SalesID" />
+          </Key>
+          <Property Name="SalesID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SalesName" Type="nvarchar(max)" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6013: The table/view 'assessmentdb.dbo.tcourierfee' does not have a primary key defined and no valid primary key could be inferred. This table/view has been excluded. To use the entity, you will need to review your schema, add the correct keys, and uncomment it.
+        <EntityType Name="tcourierfee">
+          <Property Name="WeightID" Type="int" />
+          <Property Name="CourierID" Type="int" />
+          <Property Name="StartKg" Type="int" />
+          <Property Name="EndKg" Type="int" />
+          <Property Name="Price" Type="decimal" Precision="18" Scale="0" />
+        </EntityType>-->
+        <EntityType Name="trinvoice">
+          <Key>
+            <PropertyRef Name="InvoiceNo" />
+          </Key>
+          <Property Name="InvoiceNo" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="InvoiceDate" Type="smalldatetime" />
+          <Property Name="InvoiceTo" Type="nvarchar(max)" />
+          <Property Name="ShipTo" Type="nvarchar(max)" />
+          <Property Name="SalesID" Type="int" />
+          <Property Name="CourierID" Type="int" />
+          <Property Name="PaymentType" Type="int" />
+          <Property Name="CourierFee" Type="decimal" Precision="18" Scale="0" />
+        </EntityType>
+        <EntityType Name="trinvoicedetail">
+          <Key>
+            <PropertyRef Name="DetailID" />
+          </Key>
+          <Property Name="DetailID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="InvoiceNo" Type="int" />
+          <Property Name="ProductID" Type="int" />
+          <Property Name="Weight" Type="float" />
+          <Property Name="Qty" Type="int" />
+          <Property Name="Price" Type="decimal" Precision="18" Scale="0" />
+        </EntityType>
+        <Association Name="FK_trinvoice_mscourier">
+          <End Role="mscourier" Type="Self.mscourier" Multiplicity="0..1" />
+          <End Role="trinvoice" Type="Self.trinvoice" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="mscourier">
+              <PropertyRef Name="CourierID" />
+            </Principal>
+            <Dependent Role="trinvoice">
+              <PropertyRef Name="CourierID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_trinvoice_mspayment">
+          <End Role="mspayment" Type="Self.mspayment" Multiplicity="0..1" />
+          <End Role="trinvoice" Type="Self.trinvoice" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="mspayment">
+              <PropertyRef Name="PaymentID" />
+            </Principal>
+            <Dependent Role="trinvoice">
+              <PropertyRef Name="PaymentType" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_trinvoice_mssales">
+          <End Role="mssales" Type="Self.mssales" Multiplicity="0..1" />
+          <End Role="trinvoice" Type="Self.trinvoice" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="mssales">
+              <PropertyRef Name="SalesID" />
+            </Principal>
+            <Dependent Role="trinvoice">
+              <PropertyRef Name="SalesID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_trinvoice_trinvoice">
+          <End Role="trinvoice" Type="Self.trinvoice" Multiplicity="1" />
+          <End Role="trinvoice1" Type="Self.trinvoice" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="trinvoice">
+              <PropertyRef Name="InvoiceNo" />
+            </Principal>
+            <Dependent Role="trinvoice1">
+              <PropertyRef Name="InvoiceNo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_trinvoice_trinvoice1">
+          <End Role="trinvoice" Type="Self.trinvoice" Multiplicity="1" />
+          <End Role="trinvoice1" Type="Self.trinvoice" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="trinvoice">
+              <PropertyRef Name="InvoiceNo" />
+            </Principal>
+            <Dependent Role="trinvoice1">
+              <PropertyRef Name="InvoiceNo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="assessmentdbModelStoreContainer">
+          <EntitySet Name="ltcourierfee" EntityType="Self.ltcourierfee" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="mscourier" EntityType="Self.mscourier" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="mspayment" EntityType="Self.mspayment" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="msproduct" EntityType="Self.msproduct" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="mssales" EntityType="Self.mssales" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="trinvoice" EntityType="Self.trinvoice" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="trinvoicedetail" EntityType="Self.trinvoicedetail" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_trinvoice_mscourier" Association="Self.FK_trinvoice_mscourier">
+            <End Role="mscourier" EntitySet="mscourier" />
+            <End Role="trinvoice" EntitySet="trinvoice" />
+          </AssociationSet>
+          <AssociationSet Name="FK_trinvoice_mspayment" Association="Self.FK_trinvoice_mspayment">
+            <End Role="mspayment" EntitySet="mspayment" />
+            <End Role="trinvoice" EntitySet="trinvoice" />
+          </AssociationSet>
+          <AssociationSet Name="FK_trinvoice_mssales" Association="Self.FK_trinvoice_mssales">
+            <End Role="mssales" EntitySet="mssales" />
+            <End Role="trinvoice" EntitySet="trinvoice" />
+          </AssociationSet>
+          <AssociationSet Name="FK_trinvoice_trinvoice" Association="Self.FK_trinvoice_trinvoice">
+            <End Role="trinvoice" EntitySet="trinvoice" />
+            <End Role="trinvoice1" EntitySet="trinvoice" />
+          </AssociationSet>
+          <AssociationSet Name="FK_trinvoice_trinvoice1" Association="Self.FK_trinvoice_trinvoice1">
+            <End Role="trinvoice" EntitySet="trinvoice" />
+            <End Role="trinvoice1" EntitySet="trinvoice" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="assessmentdbModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="ltcourierfee">
+          <Key>
+            <PropertyRef Name="WeightID" />
+          </Key>
+          <Property Name="WeightID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CourierID" Type="Int32" />
+          <Property Name="StartKg" Type="Int32" />
+          <Property Name="EndKg" Type="Int32" />
+          <Property Name="Price" Type="Decimal" Precision="18" Scale="0" />
+        </EntityType>
+        <EntityType Name="mscourier">
+          <Key>
+            <PropertyRef Name="CourierID" />
+          </Key>
+          <Property Name="CourierID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CourierName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="trinvoices" Relationship="Self.FK_trinvoice_mscourier" FromRole="mscourier" ToRole="trinvoice" />
+        </EntityType>
+        <EntityType Name="mspayment">
+          <Key>
+            <PropertyRef Name="PaymentID" />
+          </Key>
+          <Property Name="PaymentID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PaymentName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="trinvoices" Relationship="Self.FK_trinvoice_mspayment" FromRole="mspayment" ToRole="trinvoice" />
+        </EntityType>
+        <EntityType Name="msproduct">
+          <Key>
+            <PropertyRef Name="ProductID" />
+          </Key>
+          <Property Name="ProductID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ProductName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Weight" Type="Double" />
+          <Property Name="Price" Type="Decimal" Precision="18" Scale="0" />
+        </EntityType>
+        <EntityType Name="mssale">
+          <Key>
+            <PropertyRef Name="SalesID" />
+          </Key>
+          <Property Name="SalesID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SalesName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="trinvoices" Relationship="Self.FK_trinvoice_mssales" FromRole="mssales" ToRole="trinvoice" />
+        </EntityType>
+        <EntityType Name="trinvoice">
+          <Key>
+            <PropertyRef Name="InvoiceNo" />
+          </Key>
+          <Property Name="InvoiceNo" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="InvoiceDate" Type="DateTime" Precision="0" />
+          <Property Name="InvoiceTo" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ShipTo" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="SalesID" Type="Int32" />
+          <Property Name="CourierID" Type="Int32" />
+          <Property Name="PaymentType" Type="Int32" />
+          <Property Name="CourierFee" Type="Decimal" Precision="18" Scale="0" />
+          <NavigationProperty Name="mscourier" Relationship="Self.FK_trinvoice_mscourier" FromRole="trinvoice" ToRole="mscourier" />
+          <NavigationProperty Name="mspayment" Relationship="Self.FK_trinvoice_mspayment" FromRole="trinvoice" ToRole="mspayment" />
+          <NavigationProperty Name="mssale" Relationship="Self.FK_trinvoice_mssales" FromRole="trinvoice" ToRole="mssales" />
+          <NavigationProperty Name="trinvoice1" Relationship="Self.FK_trinvoice_trinvoice" FromRole="trinvoice" ToRole="trinvoice1" />
+          <NavigationProperty Name="trinvoice2" Relationship="Self.FK_trinvoice_trinvoice" FromRole="trinvoice1" ToRole="trinvoice" />
+          <NavigationProperty Name="trinvoice11" Relationship="Self.FK_trinvoice_trinvoice1" FromRole="trinvoice" ToRole="trinvoice1" />
+          <NavigationProperty Name="trinvoice3" Relationship="Self.FK_trinvoice_trinvoice1" FromRole="trinvoice1" ToRole="trinvoice" />
+        </EntityType>
+        <EntityType Name="trinvoicedetail">
+          <Key>
+            <PropertyRef Name="DetailID" />
+          </Key>
+          <Property Name="DetailID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="InvoiceNo" Type="Int32" />
+          <Property Name="ProductID" Type="Int32" />
+          <Property Name="Weight" Type="Double" />
+          <Property Name="Qty" Type="Int32" />
+          <Property Name="Price" Type="Decimal" Precision="18" Scale="0" />
+        </EntityType>
+        <Association Name="FK_trinvoice_mscourier">
+          <End Role="mscourier" Type="Self.mscourier" Multiplicity="0..1" />
+          <End Role="trinvoice" Type="Self.trinvoice" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="mscourier">
+              <PropertyRef Name="CourierID" />
+            </Principal>
+            <Dependent Role="trinvoice">
+              <PropertyRef Name="CourierID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_trinvoice_mspayment">
+          <End Role="mspayment" Type="Self.mspayment" Multiplicity="0..1" />
+          <End Role="trinvoice" Type="Self.trinvoice" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="mspayment">
+              <PropertyRef Name="PaymentID" />
+            </Principal>
+            <Dependent Role="trinvoice">
+              <PropertyRef Name="PaymentType" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_trinvoice_mssales">
+          <End Role="mssales" Type="Self.mssale" Multiplicity="0..1" />
+          <End Role="trinvoice" Type="Self.trinvoice" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="mssales">
+              <PropertyRef Name="SalesID" />
+            </Principal>
+            <Dependent Role="trinvoice">
+              <PropertyRef Name="SalesID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_trinvoice_trinvoice">
+          <End Role="trinvoice" Type="Self.trinvoice" Multiplicity="1" />
+          <End Role="trinvoice1" Type="Self.trinvoice" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="trinvoice">
+              <PropertyRef Name="InvoiceNo" />
+            </Principal>
+            <Dependent Role="trinvoice1">
+              <PropertyRef Name="InvoiceNo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_trinvoice_trinvoice1">
+          <End Role="trinvoice" Type="Self.trinvoice" Multiplicity="1" />
+          <End Role="trinvoice1" Type="Self.trinvoice" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="trinvoice">
+              <PropertyRef Name="InvoiceNo" />
+            </Principal>
+            <Dependent Role="trinvoice1">
+              <PropertyRef Name="InvoiceNo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="assessmentdbEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="ltcourierfees" EntityType="Self.ltcourierfee" />
+          <EntitySet Name="mscouriers" EntityType="Self.mscourier" />
+          <EntitySet Name="mspayments" EntityType="Self.mspayment" />
+          <EntitySet Name="msproducts" EntityType="Self.msproduct" />
+          <EntitySet Name="mssales" EntityType="Self.mssale" />
+          <EntitySet Name="trinvoices" EntityType="Self.trinvoice" />
+          <EntitySet Name="trinvoicedetails" EntityType="Self.trinvoicedetail" />
+          <AssociationSet Name="FK_trinvoice_mscourier" Association="Self.FK_trinvoice_mscourier">
+            <End Role="mscourier" EntitySet="mscouriers" />
+            <End Role="trinvoice" EntitySet="trinvoices" />
+          </AssociationSet>
+          <AssociationSet Name="FK_trinvoice_mspayment" Association="Self.FK_trinvoice_mspayment">
+            <End Role="mspayment" EntitySet="mspayments" />
+            <End Role="trinvoice" EntitySet="trinvoices" />
+          </AssociationSet>
+          <AssociationSet Name="FK_trinvoice_mssales" Association="Self.FK_trinvoice_mssales">
+            <End Role="mssales" EntitySet="mssales" />
+            <End Role="trinvoice" EntitySet="trinvoices" />
+          </AssociationSet>
+          <AssociationSet Name="FK_trinvoice_trinvoice" Association="Self.FK_trinvoice_trinvoice">
+            <End Role="trinvoice" EntitySet="trinvoices" />
+            <End Role="trinvoice1" EntitySet="trinvoices" />
+          </AssociationSet>
+          <AssociationSet Name="FK_trinvoice_trinvoice1" Association="Self.FK_trinvoice_trinvoice1">
+            <End Role="trinvoice" EntitySet="trinvoices" />
+            <End Role="trinvoice1" EntitySet="trinvoices" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="assessmentdbModelStoreContainer" CdmEntityContainer="assessmentdbEntities">
+          <EntitySetMapping Name="ltcourierfees">
+            <EntityTypeMapping TypeName="assessmentdbModel.ltcourierfee">
+              <MappingFragment StoreEntitySet="ltcourierfee">
+                <ScalarProperty Name="WeightID" ColumnName="WeightID" />
+                <ScalarProperty Name="CourierID" ColumnName="CourierID" />
+                <ScalarProperty Name="StartKg" ColumnName="StartKg" />
+                <ScalarProperty Name="EndKg" ColumnName="EndKg" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="mscouriers">
+            <EntityTypeMapping TypeName="assessmentdbModel.mscourier">
+              <MappingFragment StoreEntitySet="mscourier">
+                <ScalarProperty Name="CourierID" ColumnName="CourierID" />
+                <ScalarProperty Name="CourierName" ColumnName="CourierName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="mspayments">
+            <EntityTypeMapping TypeName="assessmentdbModel.mspayment">
+              <MappingFragment StoreEntitySet="mspayment">
+                <ScalarProperty Name="PaymentID" ColumnName="PaymentID" />
+                <ScalarProperty Name="PaymentName" ColumnName="PaymentName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="msproducts">
+            <EntityTypeMapping TypeName="assessmentdbModel.msproduct">
+              <MappingFragment StoreEntitySet="msproduct">
+                <ScalarProperty Name="ProductID" ColumnName="ProductID" />
+                <ScalarProperty Name="ProductName" ColumnName="ProductName" />
+                <ScalarProperty Name="Weight" ColumnName="Weight" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="mssales">
+            <EntityTypeMapping TypeName="assessmentdbModel.mssale">
+              <MappingFragment StoreEntitySet="mssales">
+                <ScalarProperty Name="SalesID" ColumnName="SalesID" />
+                <ScalarProperty Name="SalesName" ColumnName="SalesName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="trinvoices">
+            <EntityTypeMapping TypeName="assessmentdbModel.trinvoice">
+              <MappingFragment StoreEntitySet="trinvoice">
+                <ScalarProperty Name="InvoiceNo" ColumnName="InvoiceNo" />
+                <ScalarProperty Name="InvoiceDate" ColumnName="InvoiceDate" />
+                <ScalarProperty Name="InvoiceTo" ColumnName="InvoiceTo" />
+                <ScalarProperty Name="ShipTo" ColumnName="ShipTo" />
+                <ScalarProperty Name="SalesID" ColumnName="SalesID" />
+                <ScalarProperty Name="CourierID" ColumnName="CourierID" />
+                <ScalarProperty Name="PaymentType" ColumnName="PaymentType" />
+                <ScalarProperty Name="CourierFee" ColumnName="CourierFee" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="trinvoicedetails">
+            <EntityTypeMapping TypeName="assessmentdbModel.trinvoicedetail">
+              <MappingFragment StoreEntitySet="trinvoicedetail">
+                <ScalarProperty Name="DetailID" ColumnName="DetailID" />
+                <ScalarProperty Name="InvoiceNo" ColumnName="InvoiceNo" />
+                <ScalarProperty Name="ProductID" ColumnName="ProductID" />
+                <ScalarProperty Name="Weight" ColumnName="Weight" />
+                <ScalarProperty Name="Qty" ColumnName="Qty" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
